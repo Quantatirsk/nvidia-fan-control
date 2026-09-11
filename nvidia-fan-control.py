@@ -3,10 +3,10 @@
 NVIDIA Fan Control 风扇和功率控制服务。
 
 交互模式:
-  sudo /opt/nvidia-fan-control/nvidia-fan-control.py
+  sudo ./nvidia-fan-control.py
 
 后台服务模式:
-  sudo /opt/nvidia-fan-control/nvidia-fan-control.py --daemon
+  sudo ./nvidia-fan-control.py --daemon
 """
 
 import argparse
@@ -80,7 +80,7 @@ except ImportError:
 CONFIG_PATH = "/etc/nvidia-fan-control/config.json"
 SERVICE_NAME = "nvidia-fan-control.service"
 SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}"
-SCRIPT_PATH = "/opt/nvidia-fan-control/nvidia-fan-control.py"
+SCRIPT_PATH = os.path.abspath(__file__)
 
 DEFAULT_MODE = "default"
 DEFAULT_INTERVAL = 2.0
