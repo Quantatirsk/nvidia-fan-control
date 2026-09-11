@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-NVIDIA 风扇和功率策略选择器及后台控制服务。
+NVIDIA Fan Control 风扇和功率控制服务。
 
 交互模式:
-  sudo /opt/nvidia-fan-control/nvidia-fan-menu.py
+  sudo /opt/nvidia-fan-control/nvidia-fan-control.py
 
 后台服务模式:
-  sudo /opt/nvidia-fan-control/nvidia-fan-menu.py --daemon
+  sudo /opt/nvidia-fan-control/nvidia-fan-control.py --daemon
 """
 
 import argparse
@@ -25,8 +25,8 @@ from typing import Any, Callable, Dict, List, Tuple
 
 def ensure_python_dependencies() -> None:
     required_modules = {
-        "pynvml": "nvidia-ml-py",
-        "textual": "textual",
+        "pynvml": "nvidia-ml-py>=12.0.0",
+        "textual": "textual>=8.2.8",
     }
     missing = [
         package
@@ -35,11 +35,6 @@ def ensure_python_dependencies() -> None:
     ]
     if not missing:
         return
-
-    requirements_path = os.path.join(os.path.dirname(__file__), "requirements.txt")
-    if not os.path.exists(requirements_path):
-        print(f"缺少依赖文件：{requirements_path}", file=sys.stderr)
-        raise SystemExit(1)
 
     print(f"检测到缺少依赖：{', '.join(missing)}")
     print("正在自动下载并安装依赖，请稍候...")
@@ -52,7 +47,7 @@ def ensure_python_dependencies() -> None:
     ]
     if os.geteuid() != 0 and sys.prefix == sys.base_prefix:
         command.append("--user")
-    command.extend(["-r", requirements_path])
+    command.extend(required_modules.values())
 
     result = subprocess.run(
         command,
@@ -85,7 +80,7 @@ except ImportError:
 CONFIG_PATH = "/etc/nvidia-fan-control/config.json"
 SERVICE_NAME = "nvidia-fan-control.service"
 SERVICE_PATH = f"/etc/systemd/system/{SERVICE_NAME}"
-SCRIPT_PATH = "/opt/nvidia-fan-control/nvidia-fan-menu.py"
+SCRIPT_PATH = "/opt/nvidia-fan-control/nvidia-fan-control.py"
 
 DEFAULT_MODE = "default"
 DEFAULT_INTERVAL = 2.0
@@ -483,7 +478,7 @@ def textual_available() -> bool:
 if TEXTUAL_AVAILABLE:
 
     class FanControlApp(App):
-        TITLE = "NVIDIA 风扇和功率控制"
+        TITLE = "NVIDIA Fan Control"
         SUB_TITLE = "鼠标点击或键盘操作"
         CSS = """
         Screen {
@@ -812,7 +807,7 @@ def service_is_active() -> bool:
 
 def service_file_content() -> str:
     return f"""[Unit]
-Description=NVIDIA 风扇和功率控制服务
+Description=NVIDIA Fan Control service
 After=nvidia-persistenced.service
 Wants=nvidia-persistenced.service
 
@@ -988,7 +983,7 @@ def run_text_selection(
 ) -> Tuple[Dict[int, str], Dict[int, int]] | None:
     selected_modes = dict(current_modes)
     selected_powers = dict(current_powers)
-    print("NVIDIA 风扇和功率策略选择器")
+    print("NVIDIA Fan Control")
     print(f"配置文件：{CONFIG_PATH}")
     print("设置分为两组：先选择所有显卡的风扇策略，再选择所有显卡的功率上限；输入 q 可退出。")
 
@@ -1301,7 +1296,7 @@ def run_daemon() -> int:
     setup_logging()
     default_mode, interval, per_gpu_power, per_gpu_modes = resolve_policy()
 
-    log.info("NVIDIA 风扇和功率控制，正在读取逐卡策略")
+    log.info("NVIDIA Fan Control，正在读取逐卡策略")
     log.info(f"配置文件：{CONFIG_PATH}")
     controller = FanController(
         default_mode,
@@ -1316,7 +1311,7 @@ def run_daemon() -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="NVIDIA 风扇和功率策略选择器")
+    parser = argparse.ArgumentParser(description="NVIDIA Fan Control")
     parser.add_argument("--daemon", action="store_true", help="以 systemd 后台服务模式运行")
     args = parser.parse_args()
 

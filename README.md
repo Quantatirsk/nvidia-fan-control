@@ -1,9 +1,9 @@
-# NVIDIA 风扇和功率策略脚本
+# NVIDIA Fan Control
 
 本目录包含控制脚本和依赖说明：
 
 ```bash
-/opt/nvidia-fan-control/nvidia-fan-menu.py
+/opt/nvidia-fan-control/nvidia-fan-control.py
 ```
 
 它同时负责三件事：
@@ -17,7 +17,7 @@
 运行 Textual 中文终端界面：
 
 ```bash
-sudo /opt/nvidia-fan-control/nvidia-fan-menu.py
+sudo /opt/nvidia-fan-control/nvidia-fan-control.py
 ```
 
 脚本会自动检测并使用 `Textual` 提供全屏终端界面。界面分为两组：第一组集中设置所有显卡的风扇策略，第二组集中设置所有显卡的功率档位；每张卡仍然独立选择，支持鼠标点击和键盘操作。硬件摘要会显示每张卡的型号、显存大小、风扇能力和功率范围。通过非交互终端运行时，会自动回退到中文文本菜单；Gum 可用时作为次级交互回退。
@@ -114,10 +114,10 @@ nvidia-smi --query-gpu=index,name,power.limit,power.default_limit,power.min_limi
 首次执行脚本时会自动检查并安装 Python 依赖，因此可以直接启动：
 
 ```bash
-sudo /opt/nvidia-fan-control/nvidia-fan-menu.py
+sudo /opt/nvidia-fan-control/nvidia-fan-control.py
 ```
 
-脚本会检查 `requirements.txt` 中的 `nvidia-ml-py` 和 `textual`。如果缺失，会使用当前 Python 的 `pip` 自动下载并安装，然后继续本次启动；依赖已经存在时不会重复安装。
+脚本内置检查和安装 `nvidia-ml-py>=12.0.0`、`textual>=8.2.8`。如果缺失，会使用当前 Python 的 `pip` 自动下载并安装，然后继续本次启动；依赖已经存在时不会重复安装。内置安装不依赖 `requirements.txt`。
 
 仍需要以下运行环境：
 
