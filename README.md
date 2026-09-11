@@ -22,6 +22,10 @@ cd nvidia-fan-control
 sudo ./nvidia-fan-control.py
 ```
 
+界面示例：
+
+![NVIDIA Fan Control Textual interface](assets/nvidia-fan-control-ui.png)
+
 脚本会自动检测并使用 `Textual` 提供全屏终端界面。界面分为两组：第一组集中设置所有显卡的风扇策略，第二组集中设置所有显卡的功率档位；每张卡仍然独立选择，支持鼠标点击和键盘操作。硬件摘要会显示每张卡的型号、显存大小、风扇能力和功率范围。通过非交互终端运行时，会自动回退到中文文本菜单；Gum 可用时作为次级交互回退。
 
 逐卡风扇策略和逐卡功率会保存到：
